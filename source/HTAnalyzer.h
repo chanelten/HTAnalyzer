@@ -1,16 +1,16 @@
-#ifndef HTANALYZER_ANALYZER_H
-#define HTANALYZER_ANALYZER_H
+#ifndef HT_ANALYZER_H
+#define HT_ANALYZER_H
 
 #include <Analyzer.h>
-#include "HTAnalyzerAnalyzerResults.h"
-#include "HTAnalyzerSimulationDataGenerator.h"
+#include "HTAnalyzerResults.h"
+#include "HTSimulationDataGenerator.h"
 
-class HTAnalyzerAnalyzerSettings;
-class ANALYZER_EXPORT HTAnalyzerAnalyzer : public Analyzer2
+class HTAnalyzerSettings;
+class ANALYZER_EXPORT HTAnalyzer : public Analyzer2
 {
 public:
-	HTAnalyzerAnalyzer();
-	virtual ~HTAnalyzerAnalyzer();
+	HTAnalyzer();
+	virtual ~HTAnalyzer();
 
 	virtual void SetupResults();
 	virtual void WorkerThread();
@@ -22,11 +22,11 @@ public:
 	virtual bool NeedsRerun();
 
 protected: //vars
-	std::auto_ptr< HTAnalyzerAnalyzerSettings > mSettings;
-	std::auto_ptr< HTAnalyzerAnalyzerResults > mResults;
-	AnalyzerChannelData* mSerial;
+	std::auto_ptr< HTAnalyzerSettings > mSettings;
+	std::auto_ptr< HTAnalyzerResults > mResults;
+	AnalyzerChannelData* mMosiSerial;
 
-	HTAnalyzerSimulationDataGenerator mSimulationDataGenerator;
+	HTSimulationDataGenerator mSimulationDataGenerator;
 	bool mSimulationInitilized;
 
 	//Serial analysis vars:
@@ -39,4 +39,4 @@ extern "C" ANALYZER_EXPORT const char* __cdecl GetAnalyzerName();
 extern "C" ANALYZER_EXPORT Analyzer* __cdecl CreateAnalyzer( );
 extern "C" ANALYZER_EXPORT void __cdecl DestroyAnalyzer( Analyzer* analyzer );
 
-#endif //HTANALYZER_ANALYZER_H
+#endif //HT_ANALYZER_H

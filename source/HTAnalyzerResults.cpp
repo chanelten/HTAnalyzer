@@ -1,22 +1,22 @@
-#include "HTAnalyzerAnalyzerResults.h"
+#include "HTAnalyzerResults.h"
 #include <AnalyzerHelpers.h>
-#include "HTAnalyzerAnalyzer.h"
-#include "HTAnalyzerAnalyzerSettings.h"
+#include "HTAnalyzer.h"
+#include "HTAnalyzerSettings.h"
 #include <iostream>
 #include <fstream>
 
-HTAnalyzerAnalyzerResults::HTAnalyzerAnalyzerResults( HTAnalyzerAnalyzer* analyzer, HTAnalyzerAnalyzerSettings* settings )
+HTAnalyzerResults::HTAnalyzerResults( HTAnalyzer* analyzer, HTAnalyzerSettings* settings )
 :	AnalyzerResults(),
 	mSettings( settings ),
 	mAnalyzer( analyzer )
 {
 }
 
-HTAnalyzerAnalyzerResults::~HTAnalyzerAnalyzerResults()
+HTAnalyzerResults::~HTAnalyzerResults()
 {
 }
 
-void HTAnalyzerAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base )
+void HTAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& channel, DisplayBase display_base )
 {
 	ClearResultStrings();
 	Frame frame = GetFrame( frame_index );
@@ -26,7 +26,7 @@ void HTAnalyzerAnalyzerResults::GenerateBubbleText( U64 frame_index, Channel& ch
 	AddResultString( number_str );
 }
 
-void HTAnalyzerAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
+void HTAnalyzerResults::GenerateExportFile( const char* file, DisplayBase display_base, U32 export_type_user_id )
 {
 	std::ofstream file_stream( file, std::ios::out );
 
@@ -58,7 +58,7 @@ void HTAnalyzerAnalyzerResults::GenerateExportFile( const char* file, DisplayBas
 	file_stream.close();
 }
 
-void HTAnalyzerAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
+void HTAnalyzerResults::GenerateFrameTabularText( U64 frame_index, DisplayBase display_base )
 {
 #ifdef SUPPORTS_PROTOCOL_SEARCH
 	Frame frame = GetFrame( frame_index );
@@ -70,13 +70,13 @@ void HTAnalyzerAnalyzerResults::GenerateFrameTabularText( U64 frame_index, Displ
 #endif
 }
 
-void HTAnalyzerAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
+void HTAnalyzerResults::GeneratePacketTabularText( U64 packet_id, DisplayBase display_base )
 {
 	//not supported
 
 }
 
-void HTAnalyzerAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
+void HTAnalyzerResults::GenerateTransactionTabularText( U64 transaction_id, DisplayBase display_base )
 {
 	//not supported
 }

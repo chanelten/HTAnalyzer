@@ -1,29 +1,29 @@
-#include "HTAnalyzerSimulationDataGenerator.h"
-#include "HTAnalyzerAnalyzerSettings.h"
+#include "HTSimulationDataGenerator.h"
+#include "HTAnalyzerSettings.h"
 
 #include <AnalyzerHelpers.h>
 
-HTAnalyzerSimulationDataGenerator::HTAnalyzerSimulationDataGenerator()
+HTSimulationDataGenerator::HTSimulationDataGenerator()
 :	mSerialText( "My first analyzer, woo hoo!" ),
 	mStringIndex( 0 )
 {
 }
 
-HTAnalyzerSimulationDataGenerator::~HTAnalyzerSimulationDataGenerator()
+HTSimulationDataGenerator::~HTSimulationDataGenerator()
 {
 }
 
-void HTAnalyzerSimulationDataGenerator::Initialize( U32 simulation_sample_rate, HTAnalyzerAnalyzerSettings* settings )
+void HTSimulationDataGenerator::Initialize( U32 simulation_sample_rate, HTAnalyzerSettings* settings )
 {
 	mSimulationSampleRateHz = simulation_sample_rate;
 	mSettings = settings;
 
-	mSerialSimulationData.SetChannel( mSettings->mInputChannel );
+	mSerialSimulationData.SetChannel( mSettings->mMosiChannel );
 	mSerialSimulationData.SetSampleRate( simulation_sample_rate );
 	mSerialSimulationData.SetInitialBitState( BIT_HIGH );
 }
 
-U32 HTAnalyzerSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channel )
+U32 HTSimulationDataGenerator::GenerateSimulationData( U64 largest_sample_requested, U32 sample_rate, SimulationChannelDescriptor** simulation_channel )
 {
 	U64 adjusted_largest_sample_requested = AnalyzerHelpers::AdjustSimulationTargetSample( largest_sample_requested, sample_rate, mSimulationSampleRateHz );
 
@@ -36,7 +36,7 @@ U32 HTAnalyzerSimulationDataGenerator::GenerateSimulationData( U64 largest_sampl
 	return 1;
 }
 
-void HTAnalyzerSimulationDataGenerator::CreateSerialByte()
+void HTSimulationDataGenerator::CreateSerialByte()
 {
 	U32 samples_per_bit = mSimulationSampleRateHz / mSettings->mBitRate;
 
