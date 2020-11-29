@@ -4,7 +4,7 @@
 
 HTAnalyzerSettings::HTAnalyzerSettings()
 :	mMosiChannel( UNDEFINED_CHANNEL ),
-	mBitRate( 9600 )
+	mBitRate( 4800 )
 {
 	mMosiChannelInterface.reset( new AnalyzerSettingInterfaceChannel() );
 	mMosiChannelInterface->SetTitleAndTooltip( "HT MOSI", "HT Main Controller output" );
@@ -21,7 +21,7 @@ HTAnalyzerSettings::HTAnalyzerSettings()
 
 	AddInterface( mMosiChannelInterface.get() );
 	AddInterface( mMisoChannelInterface.get() );
-	AddInterface( mBitRateInterface.get() );
+	//AddInterface( mBitRateInterface.get() ); // 4800 forever :D
 
 	AddExportOption( 0, "Export as text/csv file" );
 	AddExportExtension( 0, "text", "txt" );
