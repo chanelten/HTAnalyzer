@@ -100,14 +100,15 @@ AnalyzerChannelData* HTAnalyzer::NextChannelEdge()
 {
 	U64 next_miso_edge = mMisoSerial->GetSampleOfNextEdge();
 	U64 next_mosi_edge = mMosiSerial->GetSampleOfNextEdge();
-	if(next_miso_edge < next_mosi_edge)
+	if((next_miso_edge < next_mosi_edge) && (next_miso_edge > 0))
 	{
 		return mMisoSerial;
 	}
-	else
+	else if(next_mosi_edge > 0)
 	{
 		return mMosiSerial;
 	}
+	return NULL;
 }
 
 void HTAnalyzer::AddFrame(const Frame &f)
@@ -271,13 +272,15 @@ bool HTAnalyzer::FrameToCredentials(U8 *frame, int frame_len, U8 *credentials, U
 
 bool HTAnalyzer::GetAckFromChannel(AnalyzerChannelData *channel, Channel& channel_settings, U32 samples_per_bit, U32 samples_to_first_center_of_first_data_bit)
 {
+#if 0
 	if(NextChannelEdge() != channel)
 	{
 		mResults->AddMarker( channel->GetSampleNumber(), AnalyzerResults::ErrorX, channel_settings );
 		return false;
 	}
+#endif
 	U64 starting_sample;
-	data = ReadByte(channel, true, channel_settings, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
+	U8 data = ReadByte(channel, true, channel_settings, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
 	AddACKFrame(data, starting_sample, channel->GetSampleNumber());
 	if(data != ACK)
 	{
@@ -322,16 +325,8 @@ void HTAnalyzer::WorkerThread()
 		int req_frame_len;
 		U8 *req_frame = NULL;
 		// looking now for an ACK. (MOSI) ---------------
-		if(NextChannelEdge() != mMosiSerial)
+		if(!GetAckFromChannel(mMosiSerial, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit))
 		{
-			mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMisoChannel );
-			continue;
-		}
-		data = ReadByte(mMosiSerial, true, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
-		AddACKFrame(data, starting_sample, mMosiSerial->GetSampleNumber());
-		if(data != ACK)
-		{
-			mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
 			continue;
 		}
 
@@ -359,16 +354,8 @@ void HTAnalyzer::WorkerThread()
 		}
 
 		// looking now for an ACK. (MOSI) ---------------
-		if(NextChannelEdge() != mMosiSerial)
+		if(!GetAckFromChannel(mMosiSerial, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit))
 		{
-			mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMisoChannel );
-			continue;
-		}
-		data = ReadByte(mMosiSerial, true, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
-		AddACKFrame(data, starting_sample, mMosiSerial->GetSampleNumber());
-		if(data != ACK)
-		{
-			mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
 			continue;
 		}
 
@@ -387,16 +374,8 @@ void HTAnalyzer::WorkerThread()
 		}
 
 		// looking now for an ACK. (MOSI) ---------------
-		if(NextChannelEdge() != mMosiSerial)
+		if(!GetAckFromChannel(mMosiSerial, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit))
 		{
-			mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMisoChannel );
-			continue;
-		}
-		data = ReadByte(mMosiSerial, true, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
-		AddACKFrame(data, starting_sample, mMosiSerial->GetSampleNumber());
-		if(data != ACK)
-		{
-			mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
 			continue;
 		}
 
@@ -413,16 +392,8 @@ void HTAnalyzer::WorkerThread()
 			free(req_frame);
 			req_frame = NULL;
 			// looking now for an ACK. (MOSI) ---------------
-			if(NextChannelEdge() != mMosiSerial)
+			if(!GetAckFromChannel(mMosiSerial, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit))
 			{
-				mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMisoChannel );
-				continue;
-			}
-			data = ReadByte(mMosiSerial, true, mSettings->mMosiChannel, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
-			AddACKFrame(data, starting_sample, mMosiSerial->GetSampleNumber());
-			if(data != ACK)
-			{
-				mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
 				continue;
 			}
 		}
@@ -439,17 +410,8 @@ void HTAnalyzer::WorkerThread()
 			req_frame = NULL;
 			mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::Start, mSettings->mMisoChannel );
 			// looking now for an ACK. (MISO) ---------------
-			if(NextChannelEdge() != mMisoSerial)
+			if(!GetAckFromChannel(mMisoSerial, mSettings->mMisoChannel, samples_per_bit, samples_to_first_center_of_first_data_bit))
 			{
-				mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
-				continue;
-			}
-			data = ReadByte(mMisoSerial, true, mSettings->mMisoChannel, samples_per_bit, samples_to_first_center_of_first_data_bit, &starting_sample);
-			AddACKFrame(data, starting_sample, mMisoSerial->GetSampleNumber());
-			mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::Stop, mSettings->mMisoChannel );
-			if(data != ACK)
-			{
-				mResults->AddMarker( mMisoSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMisoChannel );
 				continue;
 			}
 		}
