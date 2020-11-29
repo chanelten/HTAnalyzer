@@ -23,7 +23,7 @@ public:
 
 private:
 	virtual U8 ReadByte(AnalyzerChannelData *serial, bool advance_serial, Channel& channel, U32 samples_per_bit, U32 samples_to_first_center_of_first_data_bit, U64 *starting_sample);
-	virtual bool DetectComReq(bool force);
+	virtual bool DetectComReq(bool no_peek);
 	virtual void SyncSerials();
 	virtual AnalyzerChannelData* NextChannelEdge();
 	virtual void AddFrame(const Frame &f);
@@ -31,6 +31,7 @@ private:
 	virtual void AddGenericDataFrame(const U8 data, const U64 starting_sample, const U64 ending_sample);
 	virtual bool FrameToCredentials(U8 *frame, int frame_len, U8 *credentials, U8 *key);
 	virtual void AddACKFrame(const U8 data, const U64 starting_sample, const U64 ending_sample);
+	virtual bool GetAckFromChannel(AnalyzerChannelData *channel, Channel& channel_settings, U32 samples_per_bit, U32 samples_to_first_center_of_first_data_bit);
 
 protected: //vars
 	std::auto_ptr< HTAnalyzerSettings > mSettings;
