@@ -331,13 +331,6 @@ void HTAnalyzer::WorkerThread()
 		}
 
 		// looking now for a credentials frame! (MISO) --------
-
-		if(NextChannelEdge() != mMisoSerial)
-		{
-			mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
-			continue;
-		}
-
 		cred_frame_len = 0;
 		cred_frame = GetChannelFrame(&cred_frame_len, mMisoSerial, samples_per_bit, samples_to_first_center_of_first_data_bit, NULL);
 		if(cred_frame == NULL)
@@ -360,11 +353,6 @@ void HTAnalyzer::WorkerThread()
 		}
 
 		// looking for the IR Request now. (MISO) --------------------
-		if(NextChannelEdge() != mMisoSerial)
-		{
-			mResults->AddMarker( mMosiSerial->GetSampleNumber(), AnalyzerResults::ErrorX, mSettings->mMosiChannel );
-			continue;
-		}
 		req_frame_len = 0;
 		req_frame = GetChannelFrame(&req_frame_len, mMisoSerial, samples_per_bit, samples_to_first_center_of_first_data_bit, (U8 *)keys);
 		if(req_frame == NULL)
